@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.promoit</groupId>
-    <artifactId>url-shortener</artifactId>
+    <artifactId>shortlink-ttl-engine</artifactId>
     <version>1.0.0</version>
 
     <properties>
@@ -58,7 +58,13 @@
                 <version>2.44.2</version>
                 <configuration>
                     <java>
-                        <palantirJavaFormat/>
+                        <importOrder/>
+                        <trimTrailingWhitespace/>
+                        <endWithNewline/>
+                        <indent>
+                            <spaces>true</spaces>
+                            <spacesPerTab>4</spacesPerTab>
+                        </indent>
                     </java>
                 </configuration>
             </plugin>

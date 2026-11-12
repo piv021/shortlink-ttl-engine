@@ -35,7 +35,6 @@ class UrlShortenerServiceTest {
     private InMemoryNotificationAdapter notificationAdapter;
     private List<String> openedUrls;
     private MutableClock clock;
-    private AppConfig config;
     private UrlShortenerService service;
 
     @BeforeEach
@@ -44,13 +43,13 @@ class UrlShortenerServiceTest {
         notificationAdapter = new InMemoryNotificationAdapter();
         openedUrls = new ArrayList<>();
         clock = new MutableClock(Instant.parse("2026-01-01T10:00:00Z"));
-        config = new AppConfig("clck.ru/", 6, Duration.ofHours(24), 3, 60);
+        AppConfig config = new AppConfig("clck.ru/", 6, Duration.ofHours(24), 3, 60);
         service = new UrlShortenerService(
                 repository,
                 notificationAdapter,
                 openedUrls::add,
                 new ShortCodeGenerator(),
-                config,
+            config,
                 clock);
     }
 
