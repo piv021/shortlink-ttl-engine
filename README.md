@@ -12,6 +12,5 @@
 Требования: **JDK 25** и **Maven 3.9+**.
 
 ```bash
-git clone https://github.com/piv021/shortlink-ttl-engine
-cd shortlink-ttl-engine
+git remote set-url origin git@github.com:piv021/shortlink-ttl-engine.git
 mvn clean compile exec:java -Dexec.mainClass="ru.promoit.shortener.Main"
