@@ -1,64 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.promoit</groupId>
-    <artifactId>shortlink-ttl-engine</artifactId>
+    <artifactId>url-shortener</artifactId>
     <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>ShortLink TTL Engine</name>
+    <description>CLI URL Shortener service with TTL and click limit control (Java 25 LTS)</description>
 
     <properties>
-        <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <junit.version>5.11.4</junit.version>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.release>25</maven.compiler.release>
+        <junit.version>5.10.3</junit.version>
+        <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
+        <maven.surefire.plugin.version>3.5.2</maven.surefire.plugin.version>
+        <jacoco.plugin.version>0.8.13</jacoco.plugin.version>
+        <spotless.plugin.version>2.44.2</spotless.plugin.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- Компиляция под Java 25 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <release>${maven.compiler.release}</release>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
             </plugin>
+
+            <!-- Запуск модульных и интеграционных тестов JUnit 5 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.2</version>
+                <version>${maven.surefire.plugin.version}</version>
+                <configuration>
+                    <useModulePath>false</useModulePath>
+                </configuration>
             </plugin>
-            <!-- JaCoCo 0.8.13+ с поддержкой байткода Java 25 -->
+
+            <!-- Анализ покрытия кода тестами JaCoCo (с поддержкой Java 25 через ASM 9.8) -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.13</version>
+                <version>${jacoco.plugin.version}</version>
                 <executions>
                     <execution>
-                        <goals><goal>prepare-agent</goal></goals>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
                     </execution>
                     <execution>
                         <id>report</id>
                         <phase>test</phase>
-                        <goals><goal>report</goal></goals>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.50</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <!-- Линтер и автоформатирование кода -->
+
+            <!-- Форматирование кода Spotless (совместимо с JDK 25 и кроссплатформенно между Windows и Linux) -->
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.44.2</version>
+                <version>${spotless.plugin.version}</version>
                 <configuration>
+                    <lineEndings>UNIX</lineEndings>
                     <java>
                         <importOrder/>
+                        <removeUnusedImports/>
                         <trimTrailingWhitespace/>
                         <endWithNewline/>
                         <indent>
@@ -67,6 +127,15 @@
                         </indent>
                     </java>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>spotless-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
